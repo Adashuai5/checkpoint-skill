@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Session-handoff / checkpoint routine. Flush this session's durable conclusions into the project's existing memory file, then emit a paste-able "new session opener" so a fresh session resumes cheaply without re-deriving context or hallucinating. Use when the user types /checkpoint or says 收尾 / 结一下 / 存档 / handoff / 上下文太长了 / "context is getting long" / "let's wrap up" / "start a new session" / "save state", OR when you (the model) sense the conversation has grown long, started repeating, or is about to be auto-compacted. Encodes the principle: source of truth lives in files, not in conversation memory.
+description: "Session-handoff and checkpoint routine. Flushes the current session's durable conclusions into the project's existing memory file, then emits a paste-able new-session opener so a fresh session resumes cheaply without re-deriving context or hallucinating. Use when the user types /checkpoint or says wrap up, save state, handoff, context is getting long, or the Chinese 收尾 / 结一下 / 存档 / 上下文太长了, OR when you (the model) sense the conversation has grown long, started repeating, or is about to be auto-compacted. Encodes the principle that the source of truth lives in files rather than conversation memory."
 ---
 
 # Checkpoint — hand the session off to a file
