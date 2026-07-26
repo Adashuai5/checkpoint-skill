@@ -1,0 +1,4 @@
+interface:
+  display_name: "Checkpoint"
+  short_description: "Promote durable session state into project files"
+  default_prompt: "Use $checkpoint to reconcile verified project state and prepare a clean handoff only if needed."

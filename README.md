@@ -1,28 +1,52 @@
 # checkpoint
 
-A Claude Code / Agent Skill that hands a long session off to a **file**, so a fresh session can resume cheaply — without re-deriving context or hallucinating.
+A runtime-neutral [Agent Skill](https://agentskills.io/) for durable project checkpoints and clean session handoffs.
 
-Long sessions rot: early detail blurs, hallucination rises, and the harness silently auto-summarizes (dropping detail you can't see). This skill keeps the source of truth in files, not in the conversation.
+Codex and Claude Code are the primary compatibility targets. Any Agent Skills-compatible coding agent with project-file access can use the same core workflow. Agents without native skill discovery can load `SKILL.md` manually and use the documented safe fallbacks.
 
-When you (or the model) sense the chat is getting long, `/checkpoint`:
+The agent proactively reconciles verified decisions and state at meaningful task boundaries. Routine, objective, low-risk updates can be automatic when the surrounding project delegates memory maintenance. Ambiguous decisions, policy changes, conflicts, deletions, and sensitive information still require confirmation.
 
-1. finds your project's **existing** memory file (`MEMORY.md` / `HANDOFF.md` / `findings.md` / `CLAUDE.md` / `项目记忆.md`),
-2. distills this session's durable decisions & state into it — **after showing you for confirmation**,
-3. emits a paste-able **opener** for your next session (which files to read first + current thrust + next action).
+> Canonical project files are the source of truth. Hooks are lifecycle signals; chat history and generated memories are recall caches.
 
-> Principle: the source of truth lives in files, not in conversation memory.
+`/checkpoint` still produces a clean cross-thread or cross-runtime handoff. Ordinary syncs and reliable same-thread resumes do not create unnecessary opener text.
+
+## Compatibility contract
+
+The core skill does not depend on vendor-specific hooks, memory stores, event names, or frontmatter extensions.
+
+| Runtime | Discovery | Checkpoint behavior |
+|---|---|---|
+| Codex | Native Agent Skills support | Full workflow; hooks optional |
+| Claude Code | Native skills support | Full workflow; hooks optional |
+| Other Agent Skills clients | Runtime-specific skill path | Full workflow when project files are readable/writable |
+| Other file-working agents | Load `SKILL.md` manually | Explicit invocation; exact-patch fallback when read-only |
+
+Other documented Agent Skills clients include [Cursor](https://cursor.com/docs/skills), [Gemini CLI](https://geminicli.com/docs/cli/using-agent-skills/), [OpenCode](https://opencode.ai/docs/skills), and [GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills). Their discovery paths and lifecycle features differ.
+
+Lifecycle automation varies by runtime. An adapter may request `sync`, `compact`, `handoff`, or `resume`, but every runtime must still apply the same evidence, privacy, ownership, and confirmation gates.
 
 ## Install
 
+Using the open `skills` CLI:
+
 ```bash
-npx skills add Adashuai5/checkpoint-skill
+npx skills add Adashuai5/checkpoint-skill -g -a codex -a claude-code
 ```
 
-Or copy `skills/checkpoint/SKILL.md` into your `~/.claude/skills/checkpoint/`.
+Manual discovery locations:
+
+- Cross-client / Codex: `~/.agents/skills/checkpoint/`
+- Claude Code: `~/.claude/skills/checkpoint/`
+
+For a repository-scoped install, use `.agents/skills/checkpoint/` and `.claude/skills/checkpoint/` as required by the active runtimes.
+
+The canonical skill directory in this repository is `skills/checkpoint/`. Keep one checkout. Use installer-managed links or symlinks only where the runtime version supports them; do not hand-maintain divergent copies.
 
 ## Triggers
 
-`/checkpoint`, "wrap up", "save state", "handoff", "context is getting long" — and Chinese: 收尾 / 结一下 / 存档 / 上下文太长了.
+Explicit: `/checkpoint`, "wrap up", "save state", "handoff", "context is getting long", 收尾, 结一下, 存档, 上下文太长了.
+
+Proactive: durable decisions or state changes, meaningful task boundaries, pre-compaction, and actual cross-runtime handoffs. It intentionally does not run on every ordinary turn.
 
 ## License
 
